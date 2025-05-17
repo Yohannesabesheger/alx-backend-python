@@ -8,8 +8,8 @@ def stream_users():
         # Connect to the ALX_prodev database
         conn = mysql.connector.connect(
             host="localhost",
-            user="root",
-            password="Yohannes@hira123321",  # Update this with your MySQL root password
+            user="######",
+            password="#####",  # Update this with your MySQL root password
             database="ALX_prodev"
         )
         cursor = conn.cursor(dictionary=True)
