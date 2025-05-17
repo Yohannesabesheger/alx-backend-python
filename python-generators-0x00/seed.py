@@ -8,7 +8,7 @@ def connect_db():
         connection = mysql.connector.connect(
             host='localhost',
             user='root',
-            password='your_password'  # Update this with your MySQL root password
+            password='Yohannes@hira123321'  # Update this with your MySQL root password
         )
         return connection
     except mysql.connector.Error as err:
@@ -30,7 +30,7 @@ def connect_to_prodev():
         connection = mysql.connector.connect(
             host='localhost',
             user='root',
-            password='your_password',  # Update this
+            password='Yohannes@hira123321',  # Update this
             database='ALX_prodev'
         )
         return connection
