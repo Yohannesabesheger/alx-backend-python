@@ -12,7 +12,8 @@ def log_queries():
         def wrapper(*args, **kwargs):
             # Extract the SQL query from positional or keyword arguments
             query = args[0] if args else kwargs.get('query', '')
-            print(f"[LOG] Executing SQL query: {query}")
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            print(f"[{timestamp}] [LOG] Executing SQL query: {query}")
             return func(*args, **kwargs)
         return wrapper
     return decorator
