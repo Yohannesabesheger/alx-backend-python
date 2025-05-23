@@ -1,14 +1,23 @@
+#!/usr/bin/env python3
 import sqlite3
 import functools
-import datetime
-from datetime import datetime
 
-# decorator to lof SQL queries
-
-""" YOUR CODE GOES HERE"""
+# Decorator to log SQL queries
 
 
-@log_queries
+def log_queries():
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            # Extract the SQL query from positional or keyword arguments
+            query = args[0] if args else kwargs.get('query', '')
+            print(f"[LOG] Executing SQL query: {query}")
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+@log_queries()
 def fetch_all_users(query):
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -17,31 +26,46 @@ def fetch_all_users(query):
     conn.close()
     return results
 
+# Create the database and user table if it doesn't exist
 
-# fetch users while logging the query
+
+def initialize_database():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+
+# Initialize the database
+initialize_database()
+
+# Fetch users while logging the query
 users = fetch_all_users(query="SELECT * FROM users")
+print(users)
 
 
-def log_queries(func):
-    """
-    Decorator to log SQL queries executed by the function.
-    """
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        query = args[0]
-        print(f"Executing query: {query}")
-        return func(*args, **kwargs)
-    return wrapper
+@log_queries()
+def insert_user(query, params):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute(query, params)
+    conn.commit()
+    conn.close()
 
 
-# Example usage
-# Create a sample SQLite database and table
-conn = sqlite3.connect('users.db')
-cursor = conn.cursor()
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY,
-        name TEXT NOT NULL,
-        age INTEGER NOT NULL
-    )
-''')
+# # Insert sample users into the database
+# insert_user(query="INSERT INTO users (name, email) VALUES (?, ?)",
+#             params=("John Doe", "john.doe@example.com"))
+# insert_user(query="INSERT INTO users (name, email) VALUES (?, ?)",
+#             params=("Jane Smith", "jane.smith@example.com"))
+
+# Fetch users again to verify insertion
+users = fetch_all_users(query="SELECT * FROM users")
+print(users)
