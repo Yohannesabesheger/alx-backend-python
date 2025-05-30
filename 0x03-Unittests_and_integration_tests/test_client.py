@@ -14,7 +14,7 @@ from client import GithubOrgClient
 from utils import get_json
 
 from parameterized import parameterized_class
-
+from fixtures import org_payload
 
 class TestGithubOrgClient(unittest.TestCase):
     """
