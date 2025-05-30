@@ -53,7 +53,7 @@ class TestGithubOrgClient(unittest.TestCase):
         payload = {"repos_url": expected_url}
 
         with patch.object(
-            GithubOrgClient, "org", new_callable=PropertyMock) as mock_org:
+                            GithubOrgClient, "org", new_callable=PropertyMock) as mock_org:
             mock_org.return_value = payload
             client = GithubOrgClient("testorg")
 
