@@ -68,14 +68,19 @@ class TestMemoize(unittest.TestCase):
 
         class TestClass:
             """
-            This module contains the definition of the TestClass.
+            This module contains the 
+            definition of the TestClass.
 
             Classes:
-                TestClass: A sample class demonstrating the use of memoization and method/property definitions.
+                TestClass: A sample class 
+                demonstrating the use of 
+                memoization and method/property definitions.
 
             Methods:
                 a_method: Returns a constant value of 42.
-                a_property: A memoized property that calls `a_method` and returns its result.
+                a_property: A memoized property 
+                that calls `a_method` 
+                and returns its result.
             """
 
             def a_method(self):
