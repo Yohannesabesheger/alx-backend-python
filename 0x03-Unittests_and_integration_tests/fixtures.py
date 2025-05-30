@@ -948,7 +948,6 @@ TEST_PAYLOAD = [
     ['dagger', 'kratu', 'traceur-compiler', 'firmata.py'],
   )
 ]
-# fixtures.py
 
 org_payload = {
     "repos_url": "https://api.github.com/orgs/google/repos"
