@@ -65,7 +65,6 @@ class TestGetJson(unittest.TestCase):
 
 class TestMemoize(unittest.TestCase):
     def test_memoize(self):
-        """Test that memoize caches method result and calls original method only once."""
 
         class TestClass:
             def a_method(self):
