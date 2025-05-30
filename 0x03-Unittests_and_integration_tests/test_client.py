@@ -11,10 +11,20 @@ from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
 
 from client import GithubOrgClient
+import fixtures
 from utils import get_json
 
 from parameterized import parameterized_class
-from fixtures import org_payload
+
+@parameterized_class([
+    {
+        'org_payload': fixtures.org_payload,
+        'repos_payload': fixtures.repos_payload,
+        'expected_repos': fixtures.expected_repos,
+        'apache2_repos': fixtures.apache2_repos
+    }
+])
+
 
 class TestGithubOrgClient(unittest.TestCase):
     """
@@ -98,7 +108,33 @@ class TestGithubOrgClient(unittest.TestCase):
         """
         self.assertEqual(GithubOrgClient.has_license(
             repo, license_key), expected)
+    @classmethod
+    def setUpClass(cls):
+        """Patch requests.get for the duration of all tests in the class"""
+        cls.get_patcher = patch('requests.get')
+        cls.mock_get = cls.get_patcher.start()
 
+        # Define side effects of successive calls to requests.get
+        cls.mock_get.side_effect = [
+            fixtures.org_payload,  # First call: .org()
+            fixtures.repos_payload  # Second call: .public_repos()
+        ]
+
+    @classmethod
+    def tearDownClass(cls):
+        """Stop the patcher"""
+        cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """Test public_repos method returns expected repo names"""
+        client = GithubOrgClient("google")
+        self.assertEqual(client.public_repos(), self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """Test public_repos filtered by license='apache-2.0'"""
+        client = GithubOrgClient("google")
+        result = client.public_repos(license="apache-2.0")
+        self.assertEqual(result, self.apache2_repos)
 
 if __name__ == "__main__":
     unittest.main()
