@@ -14,7 +14,6 @@ from client import GithubOrgClient
 from utils import get_json
 
 
-
 class TestGithubOrgClient(unittest.TestCase):
     """
     Unit tests for the GithubOrgClient class.
@@ -75,7 +74,8 @@ class TestGithubOrgClient(unittest.TestCase):
 
         test_url = "https://api.github.com/orgs/testorg/repos"
 
-        with patch.object(GithubOrgClient, "_public_repos_url", new_callable=PropertyMock) as mock_repos_url:
+        with patch.object(GithubOrgClient, "_public_repos_url",
+                          new_callable=PropertyMock) as mock_repos_url:
             mock_repos_url.return_value = test_url
 
             client = GithubOrgClient("testorg")
@@ -92,19 +92,6 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_has_license(self, repo, license_key, expected):
         """
         Test the has_license method of GithubOrgClient.
-
-        Parameters
-        ----------
-        repo : dict
-            Repository dictionary containing license info.
-        license_key : str
-            License key to check against the repo's license.
-        expected : bool
-            Expected return value from has_license.
-
-        This test verifies that has_license returns True if the
-        repository's license key matches the provided license_key,
-        and False otherwise.
         """
         self.assertEqual(GithubOrgClient.has_license(
             repo, license_key), expected)
