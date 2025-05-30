@@ -82,7 +82,9 @@ class TestMemoize(unittest.TestCase):
     """
 
     def test_memoize(self):
-        """Test that a memoized method is called only once and result is cached."""
+        """Test that a memoized method is 
+        called only once and result is cached.
+        """
 
         class TestClass:
             """
