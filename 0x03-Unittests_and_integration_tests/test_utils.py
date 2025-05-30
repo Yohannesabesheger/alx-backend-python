@@ -75,6 +75,12 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
+    """Unit tests for the memoize decorator.
+
+    This test ensures that methods decorated with @memoize
+    cache their results and avoid redundant computations.
+    """
+
     def test_memoize(self):
 
         class TestClass:
