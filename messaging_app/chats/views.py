@@ -1,6 +1,7 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 
@@ -8,16 +9,19 @@ from .serializers import ConversationSerializer, MessageSerializer
 class ConversationViewSet(viewsets.ModelViewSet):
     """
     ViewSet for listing and creating conversations.
+    Supports filtering and search.
     """
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['participants__username', 'participants__email']
+    ordering_fields = ['created_at']
 
     def get_queryset(self):
-        # List conversations the current user is part of
         return Conversation.objects.filter(participants=self.request.user).distinct()
 
     def perform_create(self, serializer):
-        # Automatically include the requesting user in participants
         conversation = serializer.save()
         if self.request.user not in conversation.participants.all():
             conversation.participants.add(self.request.user)
@@ -26,13 +30,17 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 class MessageViewSet(viewsets.ModelViewSet):
     """
-    ViewSet for listing and creating messages in conversations.
+    ViewSet for listing and creating messages.
+    Supports filtering and search.
     """
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['message_body']
+    ordering_fields = ['sent_at']
 
     def get_queryset(self):
-        # Only messages from conversations the user is part of
         return Message.objects.filter(conversation__participants=self.request.user)
 
     def perform_create(self, serializer):
