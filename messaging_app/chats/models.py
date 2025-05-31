@@ -3,8 +3,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 
+# Custom user model with UUID as primary key and additional fields
 
-# Custom user model with UUID primary key and additional fields
+
 class CustomUser(AbstractUser):
     user_id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
@@ -16,13 +17,13 @@ class CustomUser(AbstractUser):
     password = models.CharField(max_length=128)
 
     REQUIRED_FIELDS = ['email', 'phone_number', 'first_name', 'last_name']
-    USERNAME_FIELD = 'username'  # You can change to 'email' if preferred
+    USERNAME_FIELD = 'username'  # You can change this to 'email' if preferred
 
     def __str__(self):
-        return f"{self.username}"
+        return self.username
 
 
-# Model to represent a conversation between users
+# Model for a conversation between users
 class Conversation(models.Model):
     conversation_id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
@@ -34,7 +35,7 @@ class Conversation(models.Model):
         return f"Conversation {self.conversation_id}"
 
 
-# Model to represent messages within a conversation
+# Model for messages in a conversation
 class Message(models.Model):
     message_id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
@@ -42,8 +43,8 @@ class Message(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name='messages_sent')
     conversation = models.ForeignKey(
         Conversation, on_delete=models.CASCADE, related_name='messages')
-    content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    message_body = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Message from {self.sender.username} at {self.timestamp}"
+        return f"Message from {self.sender.username} at {self.sent_at}"
