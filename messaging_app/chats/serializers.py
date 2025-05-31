@@ -2,47 +2,63 @@ from rest_framework import serializers
 from .models import CustomUser, Conversation, Message
 
 
-# Serializer for the Custom User model
 class UserSerializer(serializers.ModelSerializer):
+    # Explicitly declare fields with CharField
+    user_id = serializers.CharField(read_only=True)
+    username = serializers.CharField()
+    email = serializers.CharField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    phone_number = serializers.CharField(allow_blank=True, required=False)
+
     class Meta:
         model = CustomUser
-        fields = [
-            'user_id',
-            'username',
-            'email',
-            'first_name',
-            'last_name',
-            'phone_number'
-        ]
+        fields = ['user_id', 'username', 'email',
+                  'first_name', 'last_name', 'phone_number']
+
+    # Example of custom validation on username
+    def validate_username(self, value):
+        if ' ' in value:
+            raise serializers.ValidationError(
+                "Username must not contain spaces.")
+        return value
 
 
-# Serializer for Message model
 class MessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)
+    message_id = serializers.CharField(read_only=True)
+    message_body = serializers.CharField()
+    sent_at = serializers.CharField(read_only=True)
+    # Nested sender info as a read-only SerializerMethodField
+    sender = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
-        fields = [
-            'message_id',
-            'sender',
-            'conversation',
-            'message_body',
-            'sent_at'
-        ]
-        read_only_fields = ['message_id', 'sent_at']
+        fields = ['message_id', 'sender',
+                  'conversation', 'message_body', 'sent_at']
+
+    def get_sender(self, obj):
+        # Return a simplified sender representation
+        return {
+            'user_id': str(obj.sender.user_id),
+            'username': obj.sender.username,
+            'email': obj.sender.email
+        }
 
 
-# Serializer for Conversation model with nested messages
 class ConversationSerializer(serializers.ModelSerializer):
-    participants = UserSerializer(many=True, read_only=True)
+    conversation_id = serializers.CharField(read_only=True)
+    created_at = serializers.CharField(read_only=True)
+    # Show participants as nested users
+    participants = UserSerializer(many=True)
+    # Show messages using MessageSerializer
     messages = MessageSerializer(many=True, read_only=True, source='messages')
 
     class Meta:
         model = Conversation
-        fields = [
-            'conversation_id',
-            'participants',
-            'created_at',
-            'messages'
-        ]
-        read_only_fields = ['conversation_id', 'created_at']
+        fields = ['conversation_id', 'participants', 'created_at', 'messages']
+
+    def validate_participants(self, value):
+        if len(value) < 2:
+            raise serializers.ValidationError(
+                "A conversation must have at least two participants.")
+        return value
