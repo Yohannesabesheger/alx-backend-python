@@ -1,0 +1,168 @@
+{
+  "info": {
+    "name": "Messaging App API",
+    "_postman_id": "c4b08d1d-1234-4567-890a-bf65f843a7ab",
+    "description": "Postman collection for testing messaging_app endpoints using JWT authentication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login - Get JWT Token",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"your_username\",\n  \"password\": \"your_password\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/token/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "token", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Conversation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"participants\": [2]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/conversations/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "conversations", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send Message to Conversation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message_body\": \"Hello from Postman!\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/conversations/1/messages/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "conversations", "1", "messages", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Conversations",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/api/conversations/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "conversations", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Messages from Conversation",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/api/conversations/1/messages/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "conversations", "1", "messages", ""],
+          "query": [
+            {
+              "key": "sent_at__gte",
+              "value": "2025-06-01"
+            },
+            {
+              "key": "sent_at__lte",
+              "value": "2025-06-07"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "exec": [],
+        "type": "text/javascript"
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "exec": [],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "access_token",
+      "value": ""
+    }
+  ]
+}
