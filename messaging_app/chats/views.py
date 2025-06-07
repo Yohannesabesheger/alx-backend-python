@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipant
+from rest_framework.status import HTTP_403_FORBIDDEN
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
