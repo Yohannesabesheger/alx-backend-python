@@ -8,6 +8,12 @@ from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipant
 from rest_framework.status import HTTP_403_FORBIDDEN
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+from .filters import MessageFilter
+from .pagination import MessagePagination
+
+
 
 class ConversationViewSet(viewsets.ModelViewSet):
     """
@@ -31,15 +37,14 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for listing, creating, updating, and deleting messages within a conversation.
-    Only participants can access.
-    """
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated, IsParticipant]
+
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = MessageFilter
     search_fields = ['message_body']
     ordering_fields = ['sent_at']
+    pagination_class = MessagePagination
 
     def get_queryset(self):
         conversation_id = self.kwargs.get("conversation_id")
@@ -54,7 +59,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         if self.request.user not in conversation.participants.all():
             raise PermissionDenied("You are not a participant in this conversation.")
 
-        return Message.objects.filter(conversation=conversation)
+        return Message.objects.filter(conversation=conversation).order_by('-sent_at')
 
     def perform_create(self, serializer):
         conversation_id = self.kwargs.get("conversation_id")
