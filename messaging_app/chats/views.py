@@ -7,12 +7,8 @@ from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipant
 from rest_framework.status import HTTP_403_FORBIDDEN
-
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 from .filters import MessageFilter
 from .pagination import MessagePagination
-
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
@@ -37,6 +33,11 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 
 class MessageViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for listing and creating messages filtered by conversation.
+    Supports filtering by participant username and message sent date range,
+    search in message_body, ordering by sent_at, and paginated results.
+    """
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated, IsParticipant]
 
