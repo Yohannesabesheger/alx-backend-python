@@ -52,3 +52,5 @@ class MessageViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN
             )
         serializer.save(sender=self.request.user)
+        
+    permission_classes = [IsAuthenticated, IsParticipant]

@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'chats',
-    'django_filters'
+    'django_filters',
+    'rest_framework_simplejwt',
+
 
 ]
 
@@ -83,6 +85,20 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ]
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'messaging_app.chats.auth.CustomJWTAuthentication',
+),
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 
 WSGI_APPLICATION = 'messaging_app.wsgi.application'
