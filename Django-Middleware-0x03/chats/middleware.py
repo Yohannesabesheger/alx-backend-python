@@ -78,3 +78,22 @@ class OffensiveLanguageMiddleware:
         if x_forwarded_for:
             return x_forwarded_for.split(',')[0].strip()
         return request.META.get('REMOTE_ADDR')
+
+
+
+class RolePermissionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Skip check for unauthenticated users
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden("Access denied: You must be logged in.")
+
+        # Check for user role (assuming 'role' is stored on the user model)
+        user_role = getattr(request.user, 'role', None)
+
+        if user_role not in ['admin', 'moderator']:
+            return HttpResponseForbidden("Access denied: You do not have the required permissions.")
+
+        return self.get_response(request)
