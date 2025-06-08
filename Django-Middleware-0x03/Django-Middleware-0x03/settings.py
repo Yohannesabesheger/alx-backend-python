@@ -51,10 +51,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'chats.middleware.RequestLoggingMiddleware',  # Custom middleware for chat app
+    'chats.middleware.RequestLoggingMiddleware', # Custom middleware for chat app
+    'chats.middleware.RestrictAccessByTimeMiddleware', # Custom middleware for time restriction
+ 
 ]
 
-ROOT_URLCONF = 'messaging_app.urls'
+ROOT_URLCONF = 'Django-Middleware-0x03.urls'
 
 TEMPLATES = [
     {
@@ -81,7 +83,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-WSGI_APPLICATION = 'messaging_app.wsgi.application'
+WSGI_APPLICATION = 'Django-Middleware-0x03.wsgi.application'
 
 
 # Database
