@@ -1,0 +1,33 @@
+# Core
+Django
+djangorestframework
+
+# Auth & Security
+djangorestframework-simplejwt
+django-cors-headers
+django-filter
+
+# API Documentation
+drf-spectacular  # preferred over drf-yasg for OpenAPI 3 compatibility
+
+# Env Config
+python-decouple
+
+# Debugging & Logging
+django-debug-toolbar
+sentry-sdk
+
+# Production & Static
+gunicorn
+whitenoise
+psycopg2-binary  # only if using PostgreSQL
+
+# Rate Limiting
+django-ratelimit
+
+# Testing
+pytest
+pytest-django
+
+# Developer Tools
+ipython
