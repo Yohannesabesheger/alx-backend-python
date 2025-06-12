@@ -7,6 +7,10 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 # Create your views here.
 # Inside a view or serializer where request.user is available
+
+# Cache timeout in seconds
+CACHE_TTL = 60
+
 message = Message.objects.get(id=message_id)
 if message.content != new_content:
     message.content = new_content
