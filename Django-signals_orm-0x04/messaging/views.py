@@ -49,3 +49,9 @@ def inbox(request):
         .order_by('-timestamp')
     )
     return render(request, 'messaging/inbox.html', {'messages': messages})
+@login_required
+def user_inbox(request):
+    # Get all messages received by the logged-in user
+    user_messages = Message.objects.filter(receiver=request.user).order_by('-timestamp')
+
+    return render(request, 'messaging/inbox.html', {'messages': user_messages})
