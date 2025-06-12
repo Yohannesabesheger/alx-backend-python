@@ -5,11 +5,18 @@ from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
 # Create your views here.
 # Inside a view or serializer where request.user is available
 
-# Cache timeout in seconds
+# Cache timeout: 60 seconds
 CACHE_TTL = 60
+
+@login_required
+@cache_page(CACHE_TTL)
+def conversation_messages(request):
+    messages = Message.objects.filter(receiver=request.user).select_related('sender').order_by('-timestamp')
+    return render(request, 'messaging/conversation_messages.html', {'messages': messages})
 
 message = Message.objects.get(id=message_id)
 if message.content != new_content:
