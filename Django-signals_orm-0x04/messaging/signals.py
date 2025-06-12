@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from .models import Message, Notification, MessageHistory
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.db.models.signals import post_delete
 
 @receiver(post_save, sender=Message)
 def create_notification(sender, instance, created, **kwargs):
@@ -37,3 +38,15 @@ class MessageEditLoggingTest(TestCase):
         self.assertEqual(history.first().old_content, "Original Message")
         self.assertTrue(self.message.edited)
 
+@receiver(post_delete, sender=User)
+def cleanup_user_related_data(sender, instance, **kwargs):
+    # Delete messages sent or received by the user
+    Message.objects.filter(sender=instance).delete()
+    Message.objects.filter(receiver=instance).delete()
+
+    # Delete notifications belonging to the user
+    Notification.objects.filter(user=instance).delete()
+
+    # Delete message histories linked to messages sent/received by the user
+    MessageHistory.objects.filter(message__sender=instance).delete()
+    MessageHistory.objects.filter(message__receiver=instance).delete()
