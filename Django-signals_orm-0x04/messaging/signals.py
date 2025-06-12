@@ -12,6 +12,16 @@ def create_notification(sender, instance, created, **kwargs):
             user=instance.receiver,
             message=instance
         )
+@receiver(post_save, sender=Message)
+def log_message_edit(sender, instance, created, **kwargs):
+    """Signal to log message edits."""
+    if not created and instance.edited:
+        MessageHistory.objects.create(
+            message=instance,
+            old_content=instance.content
+        )
+        instance.edited = True
+        instance.save()
 class MessageEditLoggingTest(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(username='user1', password='testpass')
