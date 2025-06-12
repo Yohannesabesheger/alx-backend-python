@@ -9,8 +9,17 @@ class Message(models.Model):
     edited = models.BooleanField(default=False)
     edited_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='edited_messages')  # New field
 
+    parent_message = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='replies'
+    )
+
     def __str__(self):
-        return f"{self.sender} → {self.receiver}: {self.content[:20]}"
+        return f"From {self.sender.username} to {self.receiver.username}: {self.content[:30]}"
+    
 class Notification(models.Model):
     user = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
