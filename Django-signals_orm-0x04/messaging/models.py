@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from .managers import UnreadMessagesManager
 class UnreadMessagesManager(models.Manager):
     def unread_for_user(self, user):
         # Return unread messages where the user is the receiver

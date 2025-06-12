@@ -59,3 +59,13 @@ def user_inbox(request):
 def unread_inbox(request):
     unread_messages = Message.unread.unread_for_user(request.user).select_related('sender').order_by('-timestamp')
     return render(request, 'messaging/unread_inbox.html', {'messages': unread_messages})
+@login_required
+def unread_messages_view(request):
+    unread_messages = (
+        Message.unread
+        .unread_for_user(request.user)
+        .select_related('sender')
+        .only('id', 'sender', 'content', 'timestamp')  # explicitly in view now
+        .order_by('-timestamp')
+    )
+    return render(request, 'messaging/unread_inbox.html', {'messages': unread_messages})
