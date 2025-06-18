@@ -2,6 +2,9 @@
 Django
 djangorestframework
 
+
+mysqlclient
+
 # Auth & Security
 djangorestframework-simplejwt
 django-cors-headers
