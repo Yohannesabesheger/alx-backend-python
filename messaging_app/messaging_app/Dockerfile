@@ -1,4 +1,6 @@
-# Use an official Python runtime as a parent image
+# messaging_app/Dockerfile
+
+# Use official Python base image
 FROM python:3.10-slim
 
 # Set environment variables
@@ -9,11 +11,14 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /app
 
 # Install dependencies
-COPY requirements.txt /app/
+COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy project files into the container
-COPY . /app/
+# Copy source code
+COPY . .
 
-# Run migrations and start the server (optional, better with docker-compose)
-# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Expose port (informational)
+EXPOSE 8000
+
+# Default command to run the app
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
