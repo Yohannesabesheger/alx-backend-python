@@ -16,6 +16,16 @@ pipeline {
             }
         }
 
+        stage('Display Git Branch') {
+            steps {
+                sh '''
+                cd messaging_app
+                echo "Current Git Branch:"
+                git branch
+                '''
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 sh '''
