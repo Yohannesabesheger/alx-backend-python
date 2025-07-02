@@ -7,6 +7,8 @@ pipeline {
 
     environment {
         VENV = 'venv'
+        IMAGE_NAME = 'yohannesabesheger/messaging_app'
+        TAG = 'latest'
     }
 
     stages {
@@ -51,6 +53,27 @@ pipeline {
         stage('Archive Test Results') {
             steps {
                 junit 'messaging_app/report.xml'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                cd messaging_app
+                docker build -t $IMAGE_NAME:$TAG .
+                '''
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push $IMAGE_NAME:$TAG
+                    docker logout
+                    '''
+                }
             }
         }
     }
