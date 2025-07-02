@@ -1,4 +1,4 @@
-name: Django CI
+name: Django CI with Linting and Coverage
 
 on:
   push:
@@ -50,6 +50,7 @@ jobs:
           cd messaging_app
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install flake8 coverage
 
       - name: Wait for MySQL to be ready
         run: |
@@ -64,7 +65,23 @@ jobs:
           cd messaging_app
           python manage.py migrate
 
-      - name: Run tests
+      - name: Run linting with flake8
         run: |
           cd messaging_app
-          python manage.py test
+          echo "Running flake8 lint checks..."
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        continue-on-error: false
+
+      - name: Run tests with coverage
+        run: |
+          cd messaging_app
+          coverage run manage.py test
+          coverage report
+          coverage html
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html-report
+          path: messaging_app/htmlcov/
